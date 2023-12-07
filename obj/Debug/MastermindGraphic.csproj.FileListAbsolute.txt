@@ -1,0 +1,11 @@
+D:\P_prog_Churchod\MastermindGraphic\bin\Debug\MastermindGraphic.exe.config
+D:\P_prog_Churchod\MastermindGraphic\bin\Debug\MastermindGraphic.exe
+D:\P_prog_Churchod\MastermindGraphic\bin\Debug\MastermindGraphic.pdb
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.csproj.AssemblyReference.cache
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.csproj.SuggestedBindingRedirects.cache
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.MastermindGraphic.resources
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.Properties.Resources.resources
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.csproj.GenerateResource.cache
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.csproj.CoreCompileInputs.cache
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.exe
+D:\P_prog_Churchod\MastermindGraphic\obj\Debug\MastermindGraphic.pdb
