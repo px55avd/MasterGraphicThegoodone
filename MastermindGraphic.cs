@@ -25,7 +25,9 @@ namespace MastermindGraphic
         private const int _MARGINBUTTON = 10;
         private int _columns = 0;
         private int _rows = 0;  
-        public List<Color> _guess = new List<Color>();
+        private List<Color> _guess = new List<Color>();
+        private int  attempts = 0;
+
 
         //Déclaration de tableau de couleur
         Color[] TabColours = { Color.Green, Color.Yellow, Color.White, Color.Red, Color.Magenta, Color.Blue, Color.Cyan };
@@ -45,14 +47,16 @@ namespace MastermindGraphic
         /// <param name="secretCopy"></param>
         /// <param name="guessCopy"></param>
         /// <param name="secretCode"></param>
-        static void CopysecretCode(string guess, List<Color> secretCopy, List<Color> guessCopy, List<Color> secretCode)
+        private void CopysecretCode(List<Color> _guess, List<Color> secretCopy, List<Color> guessCopy, List<Color> secretCode)
         {
 
             secretCopy.Clear();
             secretCopy.AddRange(secretCode);
 
             guessCopy.Clear();
-            guessCopy.AddRange();
+            guessCopy.AddRange(_guess);
+
+          
         }
 
 
@@ -106,20 +110,20 @@ namespace MastermindGraphic
         /// <param name="guessCopy"></param>
         /// <param name="secretCopy"></param>
         /// <returns></returns>
-        private int CheckIncorrectlyPlaced(List<char> guessCopy, List<char> secretCopy)
+        private int CheckIncorrectlyPlaced(List<Color> guessCopy, List<Color> secretCopy)
         {
             int incorrectlyPlaced = 0;
 
             for (int i = 0; i < 4; i++)
             {
-                if (guessCopy[i] != ' ')
+                if (guessCopy[i] != Color.DarkGray)
                 {
                     for (int j = 0; j < secretCopy.Count; j++)
                     {
                         if (guessCopy[i] == secretCopy[j])
                         {
                             incorrectlyPlaced++;
-                            secretCopy[j] = ' '; // Marquage des couleurs déjà validées.
+                            secretCopy[j] = Color.DarkGray; // Marquage des couleurs déjà validées.
                             break;
                         }
                     }
@@ -194,6 +198,21 @@ namespace MastermindGraphic
 
         }
 
+        private void UpdateCheckColorsLabels(int correctlyPlaced, int misplaced)
+        {
+            // Appliquer les changements de BackColor pour les couleurs correctement placées
+            for (int i = 0; i < correctlyPlaced; i++)
+            {
+                _panelCheckColorsArray[currentAttempt - 1, i].BackColor = Color.White;
+            }
+
+            // Appliquer les changements de BackColor pour les couleurs mal placées
+            for (int i = correctlyPlaced; i < correctlyPlaced + misplaced; i++)
+            {
+                _panelCheckColorsArray[currentAttempt - 1, i].BackColor = Color.Black;
+            }
+        }
+
         void CreateBtnColours()
         {
             for (int i = 0; i < _MAXCOLORS; i++)
@@ -236,7 +255,7 @@ namespace MastermindGraphic
         {
             Button clickedButton = (Button) sender;
             _panelChoiceColorsArray[_columns,_rows ].BackColor = clickedButton.BackColor;
-            _guess = clickedButton.BackColor;
+            _guess.Add(clickedButton.BackColor);
             _rows++; 
             if( _rows == 4)
             {
@@ -244,60 +263,72 @@ namespace MastermindGraphic
                 _columns++;
 
             }
-           
+            
         }
 
         private void buttonValitador_Click(object sender, EventArgs e)
         {
-            CheckCorrectlyPlaced( guessCopy, secretCopy);
-               /* while (attempts <= 10 && !codeGuessed)
+
+
+            
+            
+            //while (attempts < 10 && _guess != secretCode)
+            {
+                attempts++; 
+                int correctlyPlaced = 0;
+                int misplaced = 0;                    
+                  
+                // Création des copies de la séquence secrète et de la proposition pour éviter les modifications indésirables.
+                List <Color> secretCopy = new List<Color>(secretCode);
+                List<Color> guessCopy = new List<Color>(_guess);
+
+                    
+
+                CopysecretCode(_guess, secretCopy, guessCopy, secretCode);
+
+                    
+
+                // Vérification des couleurs correctement placées.
+
+                correctlyPlaced = CheckCorrectlyPlaced(guessCopy, secretCopy);
+
+
+                // Vérificaton des couleurs mal placées.
+                misplaced = CheckIncorrectlyPlaced(guessCopy, secretCopy);
+
+                // Appliquer les changements de BackColor aux labels dans _panelCheckColorsArray
+                //UpdateCheckColorsLabels(correctlyPlaced, misplaced);
+                // Appliquer les changements de BackColor pour les couleurs correctement placées
+                for (int i = 0; i < correctlyPlaced; i++)
                 {
-                    Console.WriteLine();
-                    Console.Write($"Tentative {attempts}: ");
-                    string guess = Console.ReadLine().ToUpper();
-
-                    // Vérification de la proposition est valide.
-                    if (guess.Length != 4 || !guess.All(char.IsLetter) || guess.Any(c => "RBGYOPV".IndexOf(c) == -1))
+                    if (i < _panelCheckColorsArray.GetLength(1))
                     {
-                        Console.WriteLine();
-                        Console.WriteLine("La proposition n'est pas valide. Assurez-vous qu'elle comporte 4 lettres parmi les couleurs disponibles (R, B, G, Y, O, P, V).");
-                        attempts++;
-                        continue;
+                        _panelCheckColorsArray[attempts - 1, i].BackColor = Color.White;
                     }
-
-                    int correctlyPlaced = 0;
-                    int misplaced = 0;
-
-                    // Création des copies de la séquence secrète et de la proposition pour éviter les modifications indésirables.
-                    secretCopy = new List<char>(secretCode);
-                    guessCopy = new List<char>(guess);
-
-                    CopysecretCode(guess, secretCopy, guessCopy, secretCode);
-
-
-                    // Vérification des couleurs correctement placées.
-
-                    correctlyPlaced = CheckCorrectlyPlaced(guessCopy, secretCopy);
-
-
-                    // Vérificaton des couleurs mal placées.
-                    misplaced = CheckIncorrectlyPlaced(guessCopy, secretCopy);
-
-
-                    Console.WriteLine();
-                    PrintFeedback(correctlyPlaced, misplaced);// Affiche les résultats de la tentative.
-
-                    // Vérification si le code a été deviné.
-                    codeGuessed = correctlyPlaced == 4;
-                    attempts++;
                 }
 
-                // Affichage du résultat final.
-                Printfinalgame(codeGuessed, secretCode);
+                // Appliquer les changements de BackColor pour les couleurs mal placées
+                for (int i = correctlyPlaced; i < correctlyPlaced + misplaced; i++)
+                {
+                    if (i < _panelCheckColorsArray.GetLength(1))
+                    {
+                        _panelCheckColorsArray[attempts - 1, i].BackColor = Color.Black;
+                    }
+                }
 
 
-                Console.WriteLine("Voulez-vous ré-essayer ? [o/O]");
-            } while (Console.ReadLine().ToUpper() == "O");*/
+                // TODO Affiche les résultats de la tentative.
+
+                // Vérification si le code a été deviné.
+                if (correctlyPlaced == 4)
+                {
+                    MessageBox.Show("Vous avez gagné");
+
+
+                }
+                
+            }
+                
         }
     }
 }
