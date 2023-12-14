@@ -39,9 +39,8 @@ namespace MastermindGraphic
 
         }
 
-
         /// <summary>
-        /// 
+        /// Methode pour la copie du secretcode et guess code.
         /// </summary>
         /// <param name="guess"></param>
         /// <param name="secretCopy"></param>
@@ -58,9 +57,6 @@ namespace MastermindGraphic
 
           
         }
-
-
-
 
         /// <summary>
         /// Méthode pour générer le code secret.
@@ -91,18 +87,19 @@ namespace MastermindGraphic
 
             for (int i = 0; i < 4; i++)
             {
-                if (guessCopy[i] == secretCopy[i])
+                int cursor = guessCopy.Count-4+i;
+               
+                if (guessCopy[cursor] == secretCopy[i])
                 {
                     correctlyPlaced++;
                     // Marquage des couleurs déjà validées.
                     secretCopy[i] = Color.DarkGray;
-                    guessCopy[i] = Color.DarkGray;
+                    guessCopy[cursor] = Color.DarkGray;
                 }
             }
 
             return correctlyPlaced;
         }
-
 
         /// <summary>
         /// Méthode pour compter le de réponse incorrect.
@@ -116,11 +113,13 @@ namespace MastermindGraphic
 
             for (int i = 0; i < 4; i++)
             {
-                if (guessCopy[i] != Color.DarkGray)
+                int cursor = guessCopy.Count - 4 + i;
+
+                if (guessCopy[cursor] != Color.DarkGray)
                 {
                     for (int j = 0; j < secretCopy.Count; j++)
                     {
-                        if (guessCopy[i] == secretCopy[j])
+                        if (guessCopy[cursor] == secretCopy[j])
                         {
                             incorrectlyPlaced++;
                             secretCopy[j] = Color.DarkGray; // Marquage des couleurs déjà validées.
@@ -131,8 +130,9 @@ namespace MastermindGraphic
             }
             return incorrectlyPlaced;
         }
+
         /// <summary>
-        /// Déclaration d'un tableau de label pour le choix des couleurs de l'utilisateur
+        /// Méthode pour la création d'un tableau de label pour le choix des couleurs de l'utilisateur.
         /// </summary>
         /// <param name="panel"></param>
         /// <param name="rows"></param>
@@ -168,6 +168,12 @@ namespace MastermindGraphic
             }
         }
 
+        /// <summary>
+        /// Méthode pour la création du tableau de labels pour le contrôle des couleurs.
+        /// </summary>
+        /// <param name="panel"></param>
+        /// <param name="rows"></param>
+        /// <param name="columns"></param>
         private void InitializePanelcheckchoice(Panel panel, int rows, int columns)
         {
             for (int i = 0; i < rows; ++i)
@@ -191,49 +197,39 @@ namespace MastermindGraphic
 
                     _panelCheckColorsArray[i, j] = check;
 
-
                 }
             }
-
-
         }
-
-        private void UpdateCheckColorsLabels(int correctlyPlaced, int misplaced)
-        {
-            // Appliquer les changements de BackColor pour les couleurs correctement placées
-            for (int i = 0; i < correctlyPlaced; i++)
-            {
-                _panelCheckColorsArray[currentAttempt - 1, i].BackColor = Color.White;
-            }
-
-            // Appliquer les changements de BackColor pour les couleurs mal placées
-            for (int i = correctlyPlaced; i < correctlyPlaced + misplaced; i++)
-            {
-                _panelCheckColorsArray[currentAttempt - 1, i].BackColor = Color.Black;
-            }
-        }
-
+        
+        /// <summary>
+        /// Méthode de création de boutons.
+        /// </summary>
         void CreateBtnColours()
         {
             for (int i = 0; i < _MAXCOLORS; i++)
             {
-                //Création des boutons et de leurs caractéristiques
+                //Création des boutons et de leurs caractéristiques.
                 _tabColors[i] = new Button();
                 _tabColors[i].Size = new Size(40, 40);
                 _tabColors[i].BackColor = TabColours[i];
                 _tabColors[i].Tag = _tabColors[i].BackColor;
                 _tabColors[i].Text = "";
 
-                //Positionnement des boutons de couleurs
+                //Localisation des boutons.
                 int a = _tabColors[i].Height * i + _MARGINBUTTON * i + _MARGINBUTTON * i;
                 _tabColors[i].Location = new Point(a, 10);
                 panelColorsbtn.Controls.Add(_tabColors[i]);
 
-                //attache un événement au clic de chaque bouton
+                //ajout  d'un événement au clic de chaque bouton
                 _tabColors[i].Click += tabcolors_Color_Click;
             }
         }
 
+        /// <summary>
+        /// Methode pour la dispotion des deux tableaux de labels en chargement du programme.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MastermindGraphic_Load(object sender, EventArgs e)
         {
             _columnsPanel = 4;
@@ -241,16 +237,19 @@ namespace MastermindGraphic
             _panelChoiceColorsArray = new Label[_rowsPanel, _columnsPanel];
             InitializePanelcolorchoice(colorChoisepanel, _rowsPanel, _columnsPanel);
 
-
             _columnsPanel = 4;
             _rowsPanel = 10;
             _panelCheckColorsArray = new Label[_rowsPanel, _columnsPanel];
             InitializePanelcheckchoice(checkColorspanel, _rowsPanel, _columnsPanel);
 
             CreateBtnColours();
-
         }
 
+        /// <summary>
+        /// Méthode pour le chagement de couleurs du backgrouds du label au click d'un des boutons de couleurs.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tabcolors_Color_Click(object sender, EventArgs e)
         {
             Button clickedButton = (Button) sender;
@@ -261,18 +260,16 @@ namespace MastermindGraphic
             {
                 _rows = 0;
                 _columns++;
-
-            }
-            
+            }         
         }
 
+        /// <summary>
+        /// Méthode de la logique du jeu Mastermind au click du bouton "GO".
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonValitador_Click(object sender, EventArgs e)
         {
-
-
-            
-            
-            //while (attempts < 10 && _guess != secretCode)
             {
                 attempts++; 
                 int correctlyPlaced = 0;
@@ -282,23 +279,17 @@ namespace MastermindGraphic
                 List <Color> secretCopy = new List<Color>(secretCode);
                 List<Color> guessCopy = new List<Color>(_guess);
 
-                    
-
                 CopysecretCode(_guess, secretCopy, guessCopy, secretCode);
-
-                    
 
                 // Vérification des couleurs correctement placées.
 
                 correctlyPlaced = CheckCorrectlyPlaced(guessCopy, secretCopy);
 
-
                 // Vérificaton des couleurs mal placées.
                 misplaced = CheckIncorrectlyPlaced(guessCopy, secretCopy);
 
-                // Appliquer les changements de BackColor aux labels dans _panelCheckColorsArray
                 //UpdateCheckColorsLabels(correctlyPlaced, misplaced);
-                // Appliquer les changements de BackColor pour les couleurs correctement placées
+                // Appliquer les changements de BackColor pour les couleurs correctement placées dans _panelCheckColorsArray
                 for (int i = 0; i < correctlyPlaced; i++)
                 {
                     if (i < _panelCheckColorsArray.GetLength(1))
@@ -316,7 +307,6 @@ namespace MastermindGraphic
                     }
                 }
 
-
                 // TODO Affiche les résultats de la tentative.
 
                 // Vérification si le code a été deviné.
@@ -324,11 +314,8 @@ namespace MastermindGraphic
                 {
                     MessageBox.Show("Vous avez gagné");
 
-
                 }
-                
-            }
-                
+            }   
         }
     }
 }
