@@ -1,4 +1,11 @@
-﻿using System;
+﻿///**************************************************************************************
+///ETML
+///Auteur : Omar Egal Ahmed
+///Date : 07.12.2023
+///Description : Création d'un programme de type jeu en C# Winform: Mastermind. 
+///**************************************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +20,7 @@ namespace MastermindGraphic
     public partial class MastermindGraphic : Form
     {
         
-        //Déclaration des variables
+        //Déclaration et initiation des variables
         private int _rowsPanel;
         private int _columnsPanel;
         public  List<Color> secretCode;
@@ -45,6 +52,14 @@ namespace MastermindGraphic
 
         public void initializeGame()
         {
+            secretCode = GenerateSecretCode();
+
+         
+
+            attempts = 0;
+            _columns = 0;
+            _rows = 0;
+
             resetButton.Hide();
             exitButton.Hide();
 
@@ -272,21 +287,7 @@ namespace MastermindGraphic
         private void MastermindGraphic_Load(object sender, EventArgs e)
         {
             initializeGame();
-            /*resetButton.Hide();
-            exitButton.Hide();
-
-
-            _columnsPanel = 4;
-            _rowsPanel = 10;
-            _panelChoiceColorsArray = new Label[_rowsPanel, _columnsPanel];
-            InitializePanelcolorchoice(colorChoisepanel, _rowsPanel, _columnsPanel);
-
-            _columnsPanel = 4;
-            _rowsPanel = 10;
-            _panelCheckColorsArray = new Label[_rowsPanel, _columnsPanel];
-            InitializePanelcheckchoice(checkColorspanel, _rowsPanel, _columnsPanel);
-
-            CreateBtnColours();*/
+  
         }
 
         /// <summary>
@@ -296,15 +297,23 @@ namespace MastermindGraphic
         /// <param name="e"></param>
         private void tabcolors_Color_Click(object sender, EventArgs e)
         {
-            Button clickedButton = (Button) sender;
-            _panelChoiceColorsArray[_columns,_rows ].BackColor = clickedButton.BackColor;
-            _guess.Add(clickedButton.BackColor);
-            _rows++; 
-            if( _rows == 4)
+            Button clickedButton = (Button)sender;
+            if (_rows <= 3)
             {
-                _rows = 0;
-                _columns++;
-            }         
+                
+                _panelChoiceColorsArray[_columns,_rows ].BackColor = clickedButton.BackColor;
+                _guess.Add(clickedButton.BackColor);
+                _rows++;
+                if (_rows == 4)
+                {
+                    foreach (Button BtnClolors in _tabColors)
+                    {
+                        BtnClolors.Enabled = false;
+
+                    }
+                }
+            }
+         
         }
 
         /// <summary>
@@ -314,11 +323,28 @@ namespace MastermindGraphic
         /// <param name="e"></param>
         private void buttonValitador_Click(object sender, EventArgs e)
         {
+           
+            
+            //
+            foreach (Button BtnClolors in _tabColors)
             {
-                attempts++;                  
-                
+                BtnClolors.Enabled = true;
+
+            }
+
+
+            //Logique du jeu
+            if (_rows == 4)
+            {
+                _rows = 0;
+                _columns++;
+                attempts++;
+
+
+
+
                 // Création des copies de la séquence secrète et de la proposition pour éviter les modifications indésirables.
-                List <Color> secretCopy = new List<Color>(secretCode);
+                List<Color> secretCopy = new List<Color>(secretCode);
                 List<Color> guessCopy = new List<Color>(_guess);
 
                 CopysecretCode(_guess, secretCopy, guessCopy, secretCode);
@@ -349,28 +375,47 @@ namespace MastermindGraphic
                     }
                 }
 
-                // TODO Affiche les résultats de la tentative.
+            }
 
-                // Vérification si le code a été deviné.
-                if (correctlyPlaced == 4)
-                {
-                    MessageBox.Show("Vous avez gagné");
+            // TODO Affiche les résultats de la tentative.
 
-                    //Cacher les buttons "GO" et "UNDO".
-                    deleteButton.Hide();
-                    buttonValitador.Hide();
+            // Vérification si le code a été deviné.
+            if (correctlyPlaced == 4)
+            {
+                MessageBox.Show("Vous avez gagné");
 
-                    //Faire apparaitre les buttons "EXIT" et "RESET".
-                    resetButton.Show();
-                    exitButton.Show();
+                //Cacher les buttons "GO" et "UNDO".
+                deleteButton.Hide();
+                buttonValitador.Hide();
 
-                    //Cacher les panels pour le jeu.
-                    colorChoisepanel.Hide();
-                    checkColorspanel.Hide();
+                //Faire apparaitre les buttons "EXIT" et "RESET".
+                resetButton.Show();
+                exitButton.Show();
+
+                //Cacher les panels pour le jeu.
+                colorChoisepanel.Hide();
+                checkColorspanel.Hide();
 
 
-                }
-            }   
+            }
+
+            if (attempts == 10)
+            {
+                MessageBox.Show("Vous avez Perdu, La loose");
+
+                //Cacher les buttons "GO" et "UNDO".
+                deleteButton.Hide();
+                buttonValitador.Hide();
+
+                //Faire apparaitre les buttons "EXIT" et "RESET".
+                resetButton.Show();
+                exitButton.Show();
+
+                //Cacher les panels pour le jeu.
+                colorChoisepanel.Hide();
+                checkColorspanel.Hide();
+            }
+               
         }
 
         /// <summary>
@@ -379,16 +424,24 @@ namespace MastermindGraphic
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void deleteButton_Click(object sender, EventArgs e)
-        {
-            _rows--;
-            _panelChoiceColorsArray[_columns, _rows].BackColor = Color.DarkGray;
-            
-            if (_rows > 5)
+        {          
+           
+            if (_rows!= 0)//
             {
-                _rows = 0;
-                _columns++;
+
+                //
+                 _rows--;
+                _panelChoiceColorsArray[_columns, _rows].BackColor = Color.DarkGray;
+                _guess.Add(Color.DarkGray);
+
+                //
+                foreach (Button BtnClolors in _tabColors)
+                {
+                    BtnClolors.Enabled = true;
+
+                }
             }
-        }
+        }  
         /// <summary>
         /// Méthode pour quitter le programme quand on clique sur le bouton "EXIT".
         /// </summary>
@@ -406,20 +459,26 @@ namespace MastermindGraphic
         /// <param name="e"></param>
         private void resetButton_Click(object sender, EventArgs e)
         {
-
+            //
             colorChoisepanel.Controls.Clear();
             checkColorspanel.Controls.Clear();
 
+            //
             _columns = 0;
             _rows = 0;
 
+            //
             correctlyPlaced = 0;
             incorrectlyPlaced = 0;
             misplaced = 0;
             
-
+            //
             initializeGame();
             
         }
     }
 }
+
+
+//toujours des undersocore
+//Toutes les méthode commence par une majuscule.
