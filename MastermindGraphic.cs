@@ -23,12 +23,12 @@ namespace MastermindGraphic
         /// <summary>
         /// Déclaration et initialisation des variables pour le jeu Mastermind.
         /// </summary>
-        
+       
         private int _rowsPanel;  // Nombre de lignes dans le tableau de couleurs
 
         private int _columnsPanel;  // Nombre de colonnes dans le tableau de couleurs
 
-        public List<Color> secretCode;  // Code secret généré aléatoirement
+        public List<Color> _secretCode;  // Code secret généré aléatoirement
 
         private Label[,] _panelChoiceColorsArray;  // Tableau de labels pour les choix de couleurs de l'utilisateur
 
@@ -48,21 +48,21 @@ namespace MastermindGraphic
 
         private List<Color> _guess = new List<Color>();  // Liste des couleurs choisies dans la tentative actuelle
 
-        private int attempts = 0;  // Nombre total de tentatives
+        private int _attempts = 0;  // Nombre total de tentatives
 
-        private int correctlyPlaced = 0;  // Nombre de couleurs correctement placées dans la tentative actuelle
+        private int _correctlyPlaced = 0;  // Nombre de couleurs correctement placées dans la tentative actuelle
 
-        private int incorrectlyPlaced = 0;  // Nombre de couleurs incorrectement placées dans la tentative actuelle
+        private int _incorrectlyPlaced = 0;  // Nombre de couleurs incorrectement placées dans la tentative actuelle
 
-        private int misplaced = 0;  // Total des couleurs mal placées dans la tentative actuelle
+        private int _misplaced = 0;  // Total des couleurs mal placées dans la tentative actuelle
        
        
-        Color[] TabColours = { Color.Green, Color.Yellow, Color.White, Color.Red, Color.Magenta, Color.Blue, Color.Cyan }; // Tableau de couleurs disponibles
+        Color[] _tabColourschoice = { Color.Green, Color.Yellow, Color.White, Color.Red, Color.Magenta, Color.Blue, Color.Cyan }; // Tableau de couleurs disponibles
 
         public MastermindGraphic()
         {
             InitializeComponent();
-            secretCode = GenerateSecretCode();
+            _secretCode = GenerateSecretCode();
 
         }
 
@@ -72,17 +72,17 @@ namespace MastermindGraphic
         public void InitializeGame()
         {
             // Génère une nouvelle séquence secrète
-            secretCode = GenerateSecretCode();
+            _secretCode = GenerateSecretCode();
 
             // Crée des copies de la séquence secrète et de la proposition pour éviter les modifications indésirables.
-            List<Color> secretCopy = new List<Color>(secretCode);
+            List<Color> secretCopy = new List<Color>(_secretCode);
             List<Color> guessCopy = new List<Color>(_guess);
 
             // Copie la séquence secrète et la proposition de l'utilisateur
-            CopysecretCode(_guess, secretCopy, guessCopy, secretCode);
+            CopysecretCode(_guess, secretCopy, guessCopy, _secretCode);
 
             // Réinitialise les compteurs et les éléments graphiques
-            attempts = 0;
+            _attempts = 0;
             _columns = 0;
             _rows = 0;
 
@@ -151,7 +151,7 @@ namespace MastermindGraphic
 
             for (int i = 0; i < 4; i++)
             {
-                internSecretcode.Add(TabColours[random.Next(_MAXCOLORS)]);
+                internSecretcode.Add(_tabColourschoice[random.Next(_MAXCOLORS)]);
             }
 
             return internSecretcode;
@@ -166,7 +166,7 @@ namespace MastermindGraphic
         private int CheckCorrectlyPlaced(List<Color> guessCopy, List<Color> secretCopy)
         {
             // Initialise le compteur des couleurs correctement placées
-            correctlyPlaced = 0;
+            _correctlyPlaced = 0;
 
             // Parcourt les indices des couleurs dans la proposition
             for (int i = 0; i < 4; i++)
@@ -178,7 +178,7 @@ namespace MastermindGraphic
                 if (guessCopy[cursor] == secretCopy[i])
                 {
                     // Incrémente le compteur des couleurs correctement placées
-                    correctlyPlaced++;
+                    _correctlyPlaced++;
 
                     // Marque les couleurs dans la séquence secrète et la proposition comme déjà validées
                     secretCopy[i] = Color.DarkGray;
@@ -187,7 +187,7 @@ namespace MastermindGraphic
             }
 
             // Retourne le nombre de couleurs correctement placées
-            return correctlyPlaced;
+            return _correctlyPlaced;
         }
 
 
@@ -200,7 +200,7 @@ namespace MastermindGraphic
         private int CheckIncorrectlyPlaced(List<Color> guessCopy, List<Color> secretCopy)
         {
             // Initialise le compteur des couleurs mal placées
-            incorrectlyPlaced = 0;
+            _incorrectlyPlaced = 0;
 
             // Parcourt les indices des couleurs dans la proposition
             for (int i = 0; i < 4; i++)
@@ -218,7 +218,7 @@ namespace MastermindGraphic
                         if (guessCopy[cursor] == secretCopy[j])
                         {
                             // Incrémente le compteur des couleurs mal placées
-                            incorrectlyPlaced++;
+                            _incorrectlyPlaced++;
 
                             // Marque la couleur dans la séquence secrète comme déjà validée
                             secretCopy[j] = Color.DarkGray;
@@ -231,7 +231,7 @@ namespace MastermindGraphic
             }
 
             // Retourne le nombre de couleurs mal placées
-            return incorrectlyPlaced;
+            return _incorrectlyPlaced;
         }
 
         /// <summary>
@@ -335,7 +335,7 @@ namespace MastermindGraphic
                 //Création des boutons et de leurs caractéristiques.
                 _tabColors[i] = new Button();
                 _tabColors[i].Size = new Size(40, 40);
-                _tabColors[i].BackColor = TabColours[i];
+                _tabColors[i].BackColor = _tabColourschoice[i];
                 _tabColors[i].Tag = _tabColors[i].BackColor;
                 _tabColors[i].Text = "";
 
@@ -411,41 +411,41 @@ namespace MastermindGraphic
             {
                 _rows = 0;
                 _columns++;
-                attempts++;
+                _attempts++;
 
                 // Création des copies de la séquence secrète et de la proposition pour éviter les modifications indésirables
-                List<Color> secretCopy = new List<Color>(secretCode);
+                List<Color> secretCopy = new List<Color>(_secretCode);
                 List<Color> guessCopy = new List<Color>(_guess);
 
-                CopysecretCode(_guess, secretCopy, guessCopy, secretCode);
+                CopysecretCode(_guess, secretCopy, guessCopy, _secretCode);
 
                 // Vérification des couleurs correctement placées
-                correctlyPlaced = CheckCorrectlyPlaced(guessCopy, secretCopy);
+                _correctlyPlaced = CheckCorrectlyPlaced(guessCopy, secretCopy);
 
                 // Vérification des couleurs mal placées
-                misplaced = CheckIncorrectlyPlaced(guessCopy, secretCopy);
+                _misplaced = CheckIncorrectlyPlaced(guessCopy, secretCopy);
 
                 // Mise à jour des couleurs dans le tableau de vérification (_panelCheckColorsArray)
-                for (int i = 0; i < correctlyPlaced; i++)
+                for (int i = 0; i < _correctlyPlaced; i++)
                 {
                     if (i < _panelCheckColorsArray.GetLength(1))
                     {
-                        _panelCheckColorsArray[attempts - 1, i].BackColor = Color.White;
+                        _panelCheckColorsArray[_attempts - 1, i].BackColor = Color.White;
                     }
                 }
 
                 // Mise à jour des couleurs mal placées
-                for (int i = correctlyPlaced; i < correctlyPlaced + misplaced; i++)
+                for (int i = _correctlyPlaced; i < _correctlyPlaced + _misplaced; i++)
                 {
                     if (i < _panelCheckColorsArray.GetLength(1))
                     {
-                        _panelCheckColorsArray[attempts - 1, i].BackColor = Color.Black;
+                        _panelCheckColorsArray[_attempts - 1, i].BackColor = Color.Black;
                     }
                 }
             }
 
             // Vérifie si le code a été deviné
-            if (correctlyPlaced == 4)
+            if (_correctlyPlaced == 4)
             {
                 MessageBox.Show("Vous avez gagné !");
 
@@ -463,7 +463,7 @@ namespace MastermindGraphic
             }
 
             // Vérifie si le nombre maximal de tentatives a été atteint
-            if (attempts == 10)
+            if (_attempts == 10)
             {
                 MessageBox.Show("Vous avez perdu !");
 
@@ -534,16 +534,12 @@ namespace MastermindGraphic
             _rows = 0;
 
             // Réinitialise les compteurs de couleurs correctement et incorrectement placées
-            correctlyPlaced = 0;
-            incorrectlyPlaced = 0;
-            misplaced = 0;
+            _correctlyPlaced = 0;
+            _incorrectlyPlaced = 0;
+            _misplaced = 0;
 
             // Initialise le jeu avec de nouvelles couleurs secrètes
             InitializeGame();
         }
     }
 }
-
-
-//toujours des undersocore
-//Toutes les méthode commence par une majuscule.
